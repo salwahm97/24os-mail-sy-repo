@@ -1,0 +1,527 @@
+<div class="overlay" *ngIf="screen_loader">
+  <div class="center">
+    <mat-progress-spinner diameter=50 mode="indeterminate" color="primary">
+    </mat-progress-spinner>
+  </div>
+</div>
+
+<div class="choose_service" *ngIf="!start_stepper">
+  <h1>{{'Choose_The_Service' | translate }}</h1>
+  <button mat-raised-button class='yellow_btn' (click)="start_mail(); sendScrollHeight()">
+    <mat-icon>mail</mat-icon>
+    {{'Send_Mail' | translate }}
+  </button>
+  <ul class="mail_ul" [style]="direction_css">
+    <li *ngFor="let mailItem of mailItemsList">{{mailItem.item_name}}</li>
+  </ul>
+  <button mat-raised-button class='yellow_btn' (click)="start_official_documents(); sendScrollHeight()">
+    <mat-icon>description</mat-icon>
+    {{'Authentication_and_issuance_of_official_documents' | translate }}
+  </button>
+
+  <ul class="off_ul" [style]="direction_css">
+    <span *ngFor="let item of itemsList;">
+      <li *ngIf="item.item_name != 'غير ذلك' && item.item_name != 'Other' && item.item_name != 'Andere'">
+        {{item.item_name}}
+      </li>
+    </span>
+  </ul>
+
+</div>
+
+
+<mat-stepper [linear]="true" #stepper [orientation]="(stepperOrientation | async)!" *ngIf="start_stepper" (selectionChange)="sendScrollHeight()">
+
+  <mat-step [stepControl]="mailFormGroup1" *ngIf="start_mailFormGroup">
+    <ng-template matStepLabel>{{'Service_details' | translate }}</ng-template>
+
+    <div style="padding: 10px 0;">
+
+      <form class="FormGroup" [formGroup]="mailFormGroup1">
+        <section class="mail-type-section">
+          <label class="input_label">{{'Type' | translate }}:</label>
+          <mat-radio-group formControlName="mail_type">
+            <mat-radio-button *ngFor="let mailItem of mailItemsList"
+                              [value]="mailItem.id" class="normal_radio">
+
+              <span style="font-size: 16px;">{{mailItem.item_name}}</span>
+              <div style="display: flex;align-items: baseline;">
+                <span style="font-size: 11px;color: #555;margin-inline-end: 10px;">
+                  {{mailItem.item_duration}} {{'working' | translate }}
+                </span>
+                <span style="font-size: 11px;color: red;">
+                  ({{mailItem.item_price_total}})
+                </span>
+              </div>
+            </mat-radio-button>
+          </mat-radio-group>
+        </section>
+      </form>
+      <p style="color:grey;margin-inline-start: auto;" [style]="direction_css">{{'tax' | translate}}</p>
+
+    </div>
+    <div class="next_back_btn">
+      <button class="back_btn" mat-raised-button (click)="start_stepper = false;" style="margin-inline-end: 5px;">
+        {{'Back' | translate }}
+      </button>
+      <button class="next_btn" mat-raised-button
+              (click)="next(stepper, 1);">
+        {{'Next' | translate }}
+      </button>
+
+    </div>
+  </mat-step>
+
+  <mat-step [stepControl]="officialDocsFormGroup1" *ngIf="!start_mailFormGroup">
+    <ng-template matStepLabel>{{'Service_details' | translate }}</ng-template>
+
+    <div style="padding: 10px 0;">
+
+      <form class="FormGroup" [formGroup]="officialDocsFormGroup1" *ngIf="!start_mailFormGroup">
+
+        <label class="label">{{'Products' | translate }}:</label>
+        <mat-form-field appearance="outline" class="form_field_items">
+          <mat-select formControlName="items" multiple placeholder="{{'Select_item' | translate }}" (selectionChange)="selectionItemChange($event)">
+            <mat-option *ngFor="let item of itemsList" [value]="item.id">
+              <span>{{item.item_name}}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="categories_div" *ngIf="flag">
+          <section class="category-section">
+            <label class="label">{{'Category' | translate }}:</label>
+            <mat-radio-group formControlName="categories1">
+              <span *ngFor="let category1 of categoriesList1" class="category_radio">
+                <mat-radio-button (change)="onChangeCat($event, 1)" [value]="category1.id">{{category1.category_name}}</mat-radio-button>
+              </span>
+            </mat-radio-group>
+          </section>
+          <section class="category-section">
+            <label class="label">{{'Translation' | translate }}:</label>
+            <mat-radio-group formControlName="categories2">
+              <span *ngFor="let category2 of categoriesList2" class="category_radio">
+                <mat-radio-button (change)="onChangeCat($event, 2)" [value]="category2.id">{{category2.category_name}}</mat-radio-button>
+              </span>
+            </mat-radio-group>
+          </section>
+          <div style="margin-inline-start: auto;">
+            <mat-form-field appearance="outline" class="form_field_items" *ngIf="show_langs_cat2">
+              <mat-select formControlName="translate_language" placeholder="{{'Select_Language' | translate }}" (selectionChange)="onChangeLanguageCat($event)">
+                <mat-option *ngFor="let ln of languages" value="{{ln | translate}}">
+                  <span>{{ln | translate}}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <p style="color: red;margin: 0;margin-bottom:10px;font-size: 13px;" *ngIf="show_msg_cat2">{{'Please type the desired translation language in the notes field' | translate }}!</p>
+          </div>
+
+        </div>
+        <p style="color: red;margin: 0 0 10px 0;font-size: 14px;" *ngIf="show_msg_cat1">{{'Please write the name of the embassy in the notes field' | translate }}!</p>
+
+        <div style="text-align: end;">
+          <mat-form-field appearance="outline" style="width: auto;">
+            <mat-label>{{'Sheets_number' | translate }}</mat-label>
+            <input matInput type="number" placeholder="Ex. 2" formControlName="sheet_number" min="1">
+          </mat-form-field>
+        </div>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{'Notes' | translate }}</mat-label>
+          <textarea matInput formControlName="notes" placeholder="{{'enter_notes' | translate }}"></textarea>
+        </mat-form-field>
+        <p class="error" *ngIf="error_notes">{{'This_field_is_required' | translate }}!</p>
+      </form>
+      <p style="color:grey;margin-inline-start: auto;" [style]="direction_css">{{'tax' | translate}}</p>
+
+    </div>
+    <div class="next_back_btn">
+      <button class="back_btn" mat-raised-button (click)="start_stepper = false;" style="margin-inline-end: 5px;">
+        {{'Back' | translate }}
+      </button>
+      <button class="next_btn" mat-raised-button
+              (click)="next(stepper, 1)">
+        {{'Next' | translate }}
+      </button>
+
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="officialDocsFormGroup2" *ngIf="!start_mailFormGroup">
+    <ng-template matStepLabel>{{'Service_details' | translate }}</ng-template>
+
+    <div style="padding: 10px 0;">
+
+      <div class="done" [style]="direction_css">
+        <table mat-table [dataSource]="dataSource">
+
+          <!-- item_name Column -->
+          <ng-container matColumnDef="item_name">
+            <th mat-header-cell *matHeaderCellDef style="text-align:start;padding-inline-start: 10px;width:70px;"> {{'item' | translate }} </th>
+            <td mat-cell *matCellDef="let element" style="text-align:start;padding-inline-start: 10px;font-size: 14px;"> {{element.item_name}} </td>
+          </ng-container>
+
+          <!-- item_duration Column -->
+          <ng-container matColumnDef="item_duration">
+            <th mat-header-cell *matHeaderCellDef style="text-align:start;width:50px;"> {{'duration' | translate }} </th>
+            <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;"> {{element.item_duration}} {{'working' | translate }}</td>
+          </ng-container>
+
+          <!-- item_price Column -->
+          <ng-container matColumnDef="item_price">
+            <th mat-header-cell *matHeaderCellDef style="text-align:start;width:50px;"> {{'price' | translate }} </th>
+            <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;">
+              <span style="font-size: 12px;" *ngIf="element.item_price == '' && element.item_price_total != ''">{{element.item_price_total}}</span>
+              <span style="font-size: 12px;" *ngIf="element.item_price != ''">{{element.item_price}} = {{element.item_price_total}}</span>
+              <span style="font-size: 12px;" *ngIf="element.item_price == '' && element.item_price_total == ''">{{element.item_price_desc}}</span>
+            </td>
+          </ng-container>
+
+          <!-- desc item Column -->
+          <ng-container matColumnDef="item_desc">
+            <th mat-header-cell *matHeaderCellDef style="text-align:start;padding-inline-end: 10px;width:60px;">{{'Notes' | translate }}</th>
+            <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;padding-inline-end: 10px;"> {{element.item_desc}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div class="notes_order" *ngIf="notes != ''">
+          <span>{{'Notes' | translate }} : {{notes}}</span>
+        </div>
+
+        <div style="margin: 10px 0;" *ngIf="flag">
+          <div class="category_order" *ngFor="let cat of cats">
+            <p style="margin: 0;">_ {{cat.category_name}}
+              <span *ngIf="cat.category_price != '' && cat.category_price_total != ''" style="font-size: 12px;"> ({{cat.category_price}} = {{cat.category_price_total}}) </span>
+              {{cat.category_price_desc}}
+              <br> <span *ngIf="cat.category_duration != ''"> {{'and_added_to_work_duration' | translate }} {{cat.category_duration}} {{'working' | translate }}</span>
+            </p>
+          </div>
+          <p style="margin: 0;color: #666;font-weight: 500;" *ngIf="officialDocsFormGroup1.controls['translate_language'].value != ''">_ {{'Translate_language' | translate}}: ({{officialDocsFormGroup1.controls['translate_language'].value}})</p>
+
+        </div>
+
+        <div class="info_card" *ngIf="!mailInfoFlag" style="margin-bottom: 7px;">
+          <span>{{'Sheets_number' | translate }}: {{sheet_number}}</span>
+        </div>
+        <p style="margin-bottom: 1px;color:green;font-weight: 500;">{{'Total_duration' | translate }}: <span>{{total_duration}} {{'working' | translate }} ({{'may take longer than that due to current circumstances' | translate }})</span></p>
+        <p style="color:red">{{'Total_price' | translate }}: <span>{{total_price}}</span>
+          <span *ngIf="note_mandatory"> + {{'after_call' | translate }}</span>
+        </p>
+        <p style="color:grey;margin: 0;">{{'tax' | translate}}</p>
+      </div>
+
+      <form style="margin-top: 20px;" class="FormGroup" [formGroup]="officialDocsFormGroup2" *ngIf="!start_mailFormGroup">
+        <label class="input_label">{{'personal_identification' | translate }}:</label>
+        <div class="images_card">
+          <div class="image_div">
+            <label>{{'front_side' | translate }}</label>
+            <img
+                style="object-fit: contain;"
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMUlEQVR4nO2dTYsURxjHyxgSNKJXN7m4iXk5eBf1oiYiHsx3UI8xHrI5ePAmqOQD+Ib4AfaSQ0ACauYgrj31//fOCJ017MlVBF9WjG4QT3YodhZkd6unX6eqep4fPDCwPU8/9fyrq6rnqe5VShAEQRAEQRAEQRAEQRA8ZX5+/lMAP5OMAPxnbPD5ZJIkn7iOr9X0er0vAPRJphbrmWNcx9nmnt/PSP6KzcqV0AAkT+VI/or91EQMYw3Jbl4BANxzHW/rALBUQIAl1UbiOP4ewFWSDwarj7xDQqsNy7kwOblC8mATid9JsuO6oQzEANwm+VUtyQewj+Si60YxPFvUWu+tlPwoiiYBPPegMWmg9tKMHlV6/20PGpEGbp3SE64HwactsQNlev/V9ZwBeAfgF5ITaoSwYKNHHNsEySmTG0s8l8s4/cfibKqRVgQswAcx/mqJ50FtNz7dbne7cgADEMDkprYbQ58aFooAWXG6c1QTFAFEgLG+AkJBBHCMCOAYEcAxIoBjRADHBCHA6soamq4ojRCvBchbWUOdFaUR460AJSpri5UrSg7wUoAKlbWXlSpKDvBSgIqVtY4KCO8EqKmydkAFgncC5KmssYmKkiO8E6BIZY11VpQc4Z0ARSpr3TorSo7wTgCS/1p8Taw+No7jzy0CvFKB4J0AAO5XHYIA9FUgeCcAyUu2SZjkVM5J+KIKBO8EiON4j80X89vuuuKvy4K6ESP5e9mGAvij5DlFgA8n1zI/RQB4VnYHngiwNiHfAXhSIDFPtda7yiRfBFibjM3mIbsiAmD52FMzMzObRIAKcwCAQyQfVRgSFrTWP8gVUFCANE03kDwP4H3V8RjAewDnjE/lOV6sgtI0/QjA9QYmwmvGt/IYLwQwvbXBVchZ5THOBdBa/5hj2LkRx/Gxbrf7Tb/f/8yY+ay1Pm7+Nmw4iuP4qPIUpwIMVjsLGcn729wZDzu31novgLkMPw/Lro5aLQCAMxm992YURVvznj+Koq0AbmX4O608xJkAnU7nY5KPbT2/SPJXILkt40pYmJ6e3qgsNDgHZebBmQBa6yMZY/bQYWfIdhZbIg7bvjd2AgD4zfKdG4VPvgoAf1p8X1AWxk4AknfXO96sdlRFAJywxHOnaPxtFmDdnxtmZ2e/VhXRWn9riWehaPxtFuDtescnSbJFVSRJki2WeN4Wjb+1AgjLiACOEQEcIwI4RgRwjAjgGBHAMSKAY0SAFgnwxuJspK8qCwnb7m6Sr4N/ZVkIZOzunivsbPDQdOau5iYaESI5dndfKuP0YNM/aHFMDMD+ssredB08w7e/VFl6vd4OeXUxqyR/sfIrF8wWEXl5N8sk/0WVWvhqEb4cskVEjGu24EyqujFPrJuHps2yqsh/tGi7AVgyW28GuSk34QqCIAiCIAiCIAiCIAiq7fwPDj1SURSeUd8AAAAASUVORK5CYII="
+                *ngIf="!preview1_compress" (click)="selectImage1.click()">
+            <button #selectImage1 hidden (click)="selectFileImage1($event)">Upload and compress Image</button>
+            <img [src]="preview1_compress" *ngIf="preview1_compress" (click)="selectImage1.click()">
+            <p class="error" [style]="direction_css" *ngIf="preview1Error">{{'image_must_to_be_jpeg_png_jpg' | translate }}!</p>
+          </div>
+          <div class="image_div">
+            <label>{{'back_side' | translate }}</label>
+            <img
+                style="object-fit: contain;"
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAEMUlEQVR4nO2dTYsURxjHyxgSNKJXN7m4iXk5eBf1oiYiHsx3UI8xHrI5ePAmqOQD+Ib4AfaSQ0ACauYgrj31//fOCJ017MlVBF9WjG4QT3YodhZkd6unX6eqep4fPDCwPU8/9fyrq6rnqe5VShAEQRAEQRAEQRAEQRA8ZX5+/lMAP5OMAPxnbPD5ZJIkn7iOr9X0er0vAPRJphbrmWNcx9nmnt/PSP6KzcqV0AAkT+VI/or91EQMYw3Jbl4BANxzHW/rALBUQIAl1UbiOP4ewFWSDwarj7xDQqsNy7kwOblC8mATid9JsuO6oQzEANwm+VUtyQewj+Si60YxPFvUWu+tlPwoiiYBPPegMWmg9tKMHlV6/20PGpEGbp3SE64HwactsQNlev/V9ZwBeAfgF5ITaoSwYKNHHNsEySmTG0s8l8s4/cfibKqRVgQswAcx/mqJ50FtNz7dbne7cgADEMDkprYbQ58aFooAWXG6c1QTFAFEgLG+AkJBBHCMCOAYEcAxIoBjRADHBCHA6soamq4ojRCvBchbWUOdFaUR460AJSpri5UrSg7wUoAKlbWXlSpKDvBSgIqVtY4KCO8EqKmydkAFgncC5KmssYmKkiO8E6BIZY11VpQc4Z0ARSpr3TorSo7wTgCS/1p8Taw+No7jzy0CvFKB4J0AAO5XHYIA9FUgeCcAyUu2SZjkVM5J+KIKBO8EiON4j80X89vuuuKvy4K6ESP5e9mGAvij5DlFgA8n1zI/RQB4VnYHngiwNiHfAXhSIDFPtda7yiRfBFibjM3mIbsiAmD52FMzMzObRIAKcwCAQyQfVRgSFrTWP8gVUFCANE03kDwP4H3V8RjAewDnjE/lOV6sgtI0/QjA9QYmwmvGt/IYLwQwvbXBVchZ5THOBdBa/5hj2LkRx/Gxbrf7Tb/f/8yY+ay1Pm7+Nmw4iuP4qPIUpwIMVjsLGcn729wZDzu31novgLkMPw/Lro5aLQCAMxm992YURVvznj+Koq0AbmX4O608xJkAnU7nY5KPbT2/SPJXILkt40pYmJ6e3qgsNDgHZebBmQBa6yMZY/bQYWfIdhZbIg7bvjd2AgD4zfKdG4VPvgoAf1p8X1AWxk4AknfXO96sdlRFAJywxHOnaPxtFmDdnxtmZ2e/VhXRWn9riWehaPxtFuDtescnSbJFVSRJki2WeN4Wjb+1AgjLiACOEQEcIwI4RgRwjAjgGBHAMSKAY0SAFgnwxuJspK8qCwnb7m6Sr4N/ZVkIZOzunivsbPDQdOau5iYaESI5dndfKuP0YNM/aHFMDMD+ssredB08w7e/VFl6vd4OeXUxqyR/sfIrF8wWEXl5N8sk/0WVWvhqEb4cskVEjGu24EyqujFPrJuHps2yqsh/tGi7AVgyW28GuSk34QqCIAiCIAiCIAiCIAiq7fwPDj1SURSeUd8AAAAASUVORK5CYII="
+                *ngIf="!preview2_compress" (click)="selectImage2.click()">
+            <button #selectImage2 hidden (click)="selectFileImage2()">Upload and compress Image</button>
+            <img [src]="preview2_compress" *ngIf="preview2_compress" (click)="selectImage2.click()">
+            <p class="error" [style]="direction_css" *ngIf="preview2Error">{{'image_must_to_be_jpeg_png_jpg' | translate }}!</p>
+          </div>
+        </div>
+        <p [style]="direction_css" style="color: gray;margin: 0;margin-bottom:10px;">{{'Prefer_to_enter_the_ID_photo_if_any' | translate }}!</p>
+
+
+        <label class="input_label">{{'ID_Number' | translate }}:</label>
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="id_number" placeholder="{{'enter_the_id_number' | translate }}" (blur)="validateIDNumber()">
+        </mat-form-field>
+        <p class="error" *ngIf="id_numberError">{{'Invalid_id_number' | translate }}!</p>
+        <p style="color: gray;margin: 0;margin-bottom:10px;font-size: 11px;">{{'Preference_to_enter_the_id_number' | translate }}!</p>
+
+      </form>
+
+    </div>
+    <div class="next_back_btn">
+      <button class="back_btn" mat-raised-button matStepperPrevious style="margin-inline-end: 5px;">
+        {{'Back' | translate }}
+      </button>
+      <button class="next_btn" mat-raised-button
+              (click)="next(stepper, 2)">
+        {{'Next' | translate }}
+      </button>
+
+    </div>
+  </mat-step>
+
+  <mat-step [stepControl]="personalInfoFormGroup">
+
+    <p style="color: green;margin: 0;font-size: 11px;">{{'recommended_to_enter_it_in_Latin_letters' | translate }}!</p>
+
+    <form [formGroup]="personalInfoFormGroup">
+      <ng-template matStepLabel *ngIf="!start_mailFormGroup">{{'Fill_out_your_personal_information' | translate }} </ng-template>
+      <ng-template matStepLabel *ngIf="start_mailFormGroup">{{'Sender_information' | translate }} </ng-template>
+      <label class="input_label" *ngIf="start_mailFormGroup">{{'Sender_Full_name' | translate }}:</label>
+      <label class="input_label" *ngIf="!start_mailFormGroup">{{'Full_name' | translate }}:</label>
+      <div class="fullname">
+        <div class="firstname">
+          <mat-form-field appearance="outline">
+            <mat-label *ngIf="!start_mailFormGroup">{{'First_name' | translate }}</mat-label>
+            <input *ngIf="!start_mailFormGroup" matInput placeholder="{{'First_name' | translate }}" formControlName="firstname" (blur)="validateFirstname()" required>
+            <mat-label *ngIf="start_mailFormGroup">{{'Sender_First_name' | translate }}</mat-label>
+            <input *ngIf="start_mailFormGroup" matInput placeholder="{{'Sender_First_name' | translate }}" formControlName="firstname" (blur)="validateFirstname()" required>
+
+          </mat-form-field>
+          <p class="error" *ngIf="firstnameError">{{'Invalid_firstname' | translate }}!</p>
+        </div>
+        <div class="lastname">
+          <mat-form-field appearance="outline">
+            <mat-label *ngIf="!start_mailFormGroup">{{'Last_name' | translate }}</mat-label>
+            <input *ngIf="!start_mailFormGroup" matInput placeholder="{{'Last_name' | translate }}" formControlName="lastname" (blur)="validateLastname()" required>
+            <mat-label *ngIf="start_mailFormGroup">{{'Sender_Last_name' | translate }}</mat-label>
+            <input *ngIf="start_mailFormGroup" matInput placeholder="{{'Sender_Last_name' | translate }}" formControlName="lastname" (blur)="validateLastname()" required>
+
+          </mat-form-field>
+          <p class="error" *ngIf="lastnameError">{{'Invalid_lastname' | translate }}!</p>
+        </div>
+
+      </div>
+      <p style="color: gray;margin: 0;margin-bottom:10px;font-size: 11px;">{{'The_name_is_as_it_is_written_in_the_passport_or_residence_card' | translate }}!</p>
+
+
+      <label *ngIf="!start_mailFormGroup" class="input_label">{{'Address' | translate }}:</label>
+      <label *ngIf="start_mailFormGroup" class="input_label">{{'Sender_Address' | translate }}:</label>
+      <mat-form-field appearance="outline" class="address">
+        <mat-label>{{'enter_your_Address' | translate }}</mat-label>
+        <textarea matInput formControlName="address"></textarea>
+      </mat-form-field>
+
+      <div style="margin-top: 10px;margin-bottom: 10px;">
+        <label *ngIf="!start_mailFormGroup" class="input_label">{{'Contact' | translate }}:</label>
+        <label *ngIf="start_mailFormGroup" class="input_label">{{'Sender_Contact' | translate }}:</label>
+        <mat-form-field appearance="outline">
+          <mat-label *ngIf="!start_mailFormGroup">{{'Phone' | translate }}</mat-label>
+          <mat-label *ngIf="start_mailFormGroup">{{'Sender_Phone' | translate }}</mat-label>
+          <input matInput formControlName="phone" (blur)="validatePhone()" required>
+        </mat-form-field>
+        <p class="error" *ngIf="phoneError">{{'Invalid_phone' | translate }}!</p>
+
+        <mat-form-field appearance="outline">
+          <mat-label *ngIf="!start_mailFormGroup">{{'Email' | translate }}</mat-label>
+          <mat-label *ngIf="start_mailFormGroup">{{'Sender_Email' | translate }}</mat-label>
+          <input matInput placeholder="{{'Preference_to_enter_the_Email' | translate }}" formControlName="email" (blur)="validateEmail()">
+        </mat-form-field>
+        <p class="error" *ngIf="emailError">{{'Invalid_email' | translate }}!</p>
+
+      </div>
+
+      <div class="next_back_btn">
+        <button class="back_btn" mat-raised-button matStepperPrevious style="margin-inline-end: 5px;">
+          {{'Back' | translate }}
+        </button>
+        <button class="next_btn" mat-raised-button (click)="createOrder(stepper);">{{'Next' | translate }}</button>
+      </div>
+
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="mailFormGroup2" *ngIf="start_mailFormGroup">
+    <ng-template matStepLabel>{{'recipient_information' | translate }}</ng-template>
+
+    <div style="padding: 10px 0;">
+
+      <form class="FormGroup" [formGroup]="mailFormGroup2">
+        <label class="input_label">{{'Recipient_triple_name_in_Arabic' | translate }}:</label>
+        <div class="fullname" style="margin-bottom: 10px;">
+          <div class="firstname">
+            <mat-form-field appearance="outline">
+              <mat-label>{{'Recipient_First_name' | translate }}</mat-label>
+              <input matInput placeholder="{{'Recipient_First_name' | translate }}" formControlName="rec_firstname" (blur)="validateRecFirstname()" required>
+            </mat-form-field>
+            <p class="error" *ngIf="rec_firstnameError">{{'Invalid_firstname' | translate }}!</p>
+          </div>
+          <div class="parentname">
+            <mat-form-field appearance="outline">
+              <mat-label>{{'Recipient_Parent_name' | translate }}</mat-label>
+              <input matInput placeholder="{{'Recipient_Parent_name' | translate }}" formControlName="rec_parentname" (blur)="validateRecParentname()" required>
+            </mat-form-field>
+            <p class="error" *ngIf="rec_parentnameError">{{'Invalid_parentname' | translate }}!</p>
+          </div>
+          <div class="lastname">
+            <mat-form-field appearance="outline">
+              <mat-label>{{'Recipient_Last_name' | translate }}</mat-label>
+              <input matInput placeholder="{{'Recipient_Last_name' | translate }}" formControlName="rec_lastname" (blur)="validateRecLastname()" required>
+            </mat-form-field>
+            <p class="error" *ngIf="rec_lastnameError">{{'Invalid_lastname' | translate }}!</p>
+          </div>
+
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <label class="input_label">{{'rec_address' | translate }}:</label>
+          <mat-form-field appearance="outline">
+            <mat-label>{{'enter_recipient_Address' | translate }}</mat-label>
+            <textarea matInput formControlName="rec_address"></textarea>
+          </mat-form-field>
+          <p class="error" *ngIf="error_address">{{'This_field_is_required' | translate }}!</p>
+          <p [style]="direction_css" style="color: gray;margin: 0;margin-bottom:10px;">{{'Please enter the address correctly because your requests will reach this address' | translate }}!</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{'city_syrial' | translate }}</mat-label>
+            <input matInput placeholder="{{'enter_city' | translate }}" formControlName="city" (blur)="validateCity()" required>
+          </mat-form-field>
+          <p class="error" *ngIf="cityError">{{'Invalid_city' | translate }}!</p>
+
+        </div>
+
+        <label class="input_label">{{'Recipient_contact' | translate }}:</label>
+        <mat-form-field appearance="outline">
+          <mat-label>{{'Recipient_phone' | translate }}</mat-label>
+          <input matInput formControlName="rec_phone" (blur)="validateRecPhone()" required>
+        </mat-form-field>
+        <p class="error" *ngIf="rec_phoneError">{{'Invalid_phone' | translate }}!</p>
+
+      </form>
+
+    </div>
+    <div class="next_back_btn">
+      <button class="back_btn" mat-raised-button matStepperPrevious style="margin-inline-end: 5px;">
+        {{'Back' | translate }}
+      </button>
+      <button class="next_btn" mat-raised-button
+              (click)="next(stepper, 2);">
+        {{'Next' | translate }}
+      </button>
+
+    </div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>{{'Order_confirmation' | translate }}</ng-template>
+
+    <div class="done" [style]="direction_css">
+
+      <div class="info_card">
+        <span *ngIf="!start_mailFormGroup">{{'fullname' | translate }}: {{personalInfo.firstname}} {{personalInfo.lastname}}</span>
+        <span *ngIf="start_mailFormGroup">{{'Sender_Full_name' | translate }}: {{personalInfo.firstname}} {{personalInfo.lastname}}</span>
+      </div>
+      <div class="info_card">
+        <span *ngIf="!start_mailFormGroup">{{'address' | translate }}: {{personalInfo.address}}</span>
+        <span *ngIf="start_mailFormGroup">{{'Sender_Address' | translate }}: {{personalInfo.address}}</span>
+      </div>
+      <div class="info_card">
+        <span *ngIf="!start_mailFormGroup">{{'phone' | translate }}: {{personalInfo.phone}}</span>
+        <span *ngIf="start_mailFormGroup">{{'Sender_Phone' | translate }}: {{personalInfo.phone}}</span>
+      </div>
+      <div class="info_card" *ngIf="!mailInfoFlag">
+        <span>{{'ID_Number' | translate }}: {{id_number}}</span>
+      </div>
+
+      <div class="info_card" *ngIf="!mailInfoFlag">
+        <span>{{'personal_identification' | translate }}:</span>
+        <div class="images_card" *ngIf="!mailInfoFlag">
+          <img [src]="preview1_compress" *ngIf="preview1_compress">
+          <img [src]="preview2_compress" *ngIf="preview2_compress">
+        </div>
+      </div>
+
+      <div class="info_card" *ngIf="mailInfoFlag">
+        <span>{{'Recipient_fullname' | translate }}: {{mailInfo.rec_firstname}} {{mailInfo.rec_lastname}}</span>
+      </div>
+      <div class="info_card" *ngIf="mailInfoFlag">
+        <span>{{'rec_address' | translate }}: {{mailInfo.rec_address}}</span>
+      </div>
+      <div class="info_card" *ngIf="mailInfoFlag">
+        <span>{{'City' | translate }}: {{mailInfo.city}}</span>
+      </div>
+      <div class="info_card" *ngIf="mailInfoFlag">
+        <span>{{'Recipient_phone' | translate }}: {{mailInfo.rec_phone}}</span>
+      </div>
+      <div class="info_card" *ngIf="mailInfoFlag">
+        <span>{{'Recipient_email' | translate }}: {{mailInfo.rec_email}}</span>
+      </div>
+
+      <table mat-table [dataSource]="dataSource">
+
+        <!-- item_name Column -->
+        <ng-container matColumnDef="item_name">
+          <th mat-header-cell *matHeaderCellDef style="text-align:start;padding-inline-start: 10px;width:70px;"> {{'item' | translate }} </th>
+          <td mat-cell *matCellDef="let element" style="text-align:start;padding-inline-start: 10px;font-size: 14px;"> {{element.item_name}} </td>
+        </ng-container>
+
+        <!-- item_duration Column -->
+        <ng-container matColumnDef="item_duration">
+          <th mat-header-cell *matHeaderCellDef style="text-align:start;width:50px;"> {{'duration' | translate }} </th>
+          <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;"> {{element.item_duration}} {{'working' | translate }}</td>
+        </ng-container>
+
+        <!-- item_price Column -->
+        <ng-container matColumnDef="item_price">
+          <th mat-header-cell *matHeaderCellDef style="text-align:start;width:50px;"> {{'price' | translate }} </th>
+          <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;">
+            <span style="font-size: 12px;" *ngIf="element.item_price == '' && element.item_price_total != ''">{{element.item_price_total}}</span>
+            <span style="font-size: 12px;" *ngIf="element.item_price != ''">{{element.item_price}} = {{element.item_price_total}}</span>
+            <span style="font-size: 12px;" *ngIf="element.item_price == '' && element.item_price_total == ''">{{element.item_price_desc}}</span>
+          </td>
+        </ng-container>
+
+        <!-- desc item Column -->
+        <ng-container matColumnDef="item_desc">
+          <th mat-header-cell *matHeaderCellDef style="text-align:start;padding-inline-end: 10px;width:60px;">{{'Notes' | translate }}</th>
+          <td mat-cell *matCellDef="let element" style="text-align:start;font-size: 12px;padding-inline-end: 10px;"> {{element.item_desc}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div class="notes_order" *ngIf="notes != ''">
+        <span>{{'Notes' | translate }} : {{notes}}</span>
+      </div>
+
+      <div style="margin: 10px 0;" *ngIf="flag">
+        <div class="category_order" *ngFor="let cat of cats">
+          <p style="margin: 0;">_ {{cat.category_name}}
+            <span *ngIf="cat.category_price != '' && cat.category_price_total != ''" style="font-size: 12px;"> ({{cat.category_price}} = {{cat.category_price_total}}) </span>
+            {{cat.category_price_desc}}
+            <br> <span *ngIf="cat.category_duration != ''"> {{'and_added_to_work_duration' | translate }} {{cat.category_duration}} {{'working' | translate }}</span>
+          </p>
+        </div>
+        <p style="margin: 0;color: #666;font-weight: 500;" *ngIf="officialDocsFormGroup1.controls['translate_language'].value != ''">_ {{'Translate_language' | translate}}: ({{officialDocsFormGroup1.controls['translate_language'].value}})</p>
+
+      </div>
+
+      <div class="info_card" *ngIf="!mailInfoFlag" style="margin-bottom: 7px;">
+        <span>{{'Sheets_number' | translate }}: {{sheet_number}}</span>
+      </div>
+      <p style="margin-bottom: 1px;color:green;font-weight: 500;">{{'Total_duration' | translate }}: <span>{{total_duration}} {{'working' | translate }} ({{'may take longer than that due to current circumstances' | translate }})</span></p>
+      <p style="color:red">{{'Total_price' | translate }}: <span>{{total_price}}</span>
+        <span *ngIf="note_mandatory"> + {{'after_call' | translate }}</span>
+      </p>
+      <p style="color:grey;margin: 0;">{{'tax' | translate}}</p>
+    </div>
+    <div class="send_re_order_btn">
+      <button class="re_order_btn" (click)="reOrder()" mat-raised-button style="margin-inline-end: 5px;" *ngIf="!disable_reorder_btn">
+        {{'re_order' | translate }}
+      </button>
+      <button class="re_order_btn" matStepperPrevious mat-raised-button style="margin-inline-end: 5px;" *ngIf="disable_reorder_btn">
+        {{'Back' | translate }}
+      </button>
+      <button class="send_btn" mat-raised-button [disabled]="!disable_reorder_btn"
+              (click)="send();">
+        {{'Send' | translate }}
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </mat-step>
+
+
+</mat-stepper>

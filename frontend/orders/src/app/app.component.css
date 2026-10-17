@@ -1,0 +1,9 @@
+
+app-orders {
+  width: 800px;
+}
+@media screen and (max-width: 960px) {
+  app-orders {
+    width: 100%;
+  }
+}

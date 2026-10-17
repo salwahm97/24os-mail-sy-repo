@@ -1,0 +1,141 @@
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+.overlay{
+  height:100vh;
+  width:100%;
+  background-color:rgba(0, 0, 0, 0.286);
+  z-index:    10;
+  top:        0;
+  left:       0;
+  position:   fixed;
+}
+h3[dir="rtl"]{
+  margin-inline-start: 20px;
+}
+.mat_card_order{
+  margin: 0 16px 20px 0;
+}
+.mat_card_order mat-card-header{
+  background-color: lightgoldenrodyellow;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.mat_card_order mat-card-header[dir="ltr"]{
+  letter-spacing: 2px;
+}
+
+.row3{
+  display: grid;
+  grid-template-columns: 20% 20% 20%;
+  padding-top: 10px;
+}
+.row{
+  display: grid;
+  grid-template-columns: 40% 20%;
+  padding-top: 10px;
+}
+
+.info{
+  margin-top: 20px;
+}
+.info h3{
+  font-weight: bold;
+  margin: 0;
+}
+
+b{
+  color: #555;
+}
+.img_status{
+  object-fit: contain;
+  width: 200px;
+  height: 110px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+}
+.photos {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+.photos img {
+  object-fit: contain;
+  width: 250px;
+  height: 160px;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  margin-inline-end: 5px;
+}
+.photos .img2 {
+  margin-inline-start: 5px;
+}
+.data_table{
+  margin-top: 20px;
+  overflow: auto;
+}
+.data_table th {
+  font-size: 11px;
+  color: #777;
+}
+.data_table td {
+  font-size: 12px;
+  padding-top: 10px;
+}
+.mat-cell{
+  text-align: center;
+  padding: 10px;
+  color: #888;
+  background: bisque;
+}
+.category_order {
+  font-weight: 500;
+}
+.dialog_btn{
+  margin-top: 10px;
+}
+.back_btn{
+  cursor: pointer;
+  color: #551A8B;
+}
+.forward{
+  text-decoration: none;
+  position: relative;
+}
+.forward_icon{
+  animation: rotate 1s linear infinite;
+  color: #551A8B;
+}
+@keyframes rotate {
+  from{
+    transform: rotate(180deg);
+  }
+  to{
+    transform: rotate(180deg);
+  }
+}
+@media screen and (max-width: 700px) {
+  .row3{
+    grid-template-columns: 100%;
+  }
+  .row{
+    grid-template-columns: 100%;
+  }
+  .photos{
+    flex-flow: column;
+    justify-content: center;
+    align-items: start;
+  }
+  .photos .img2 {
+    margin-inline-start: unset;
+    margin-top: 5px;
+
+  }
+
+}

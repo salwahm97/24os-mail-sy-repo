@@ -1,0 +1,19 @@
+# secrets / local config
+plugin/**/config.php
+.env
+*.env
+
+# Angular / Node
+node_modules/
+.angular/
+frontend/**/dist/
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# build leftovers
+*.zip

@@ -1,0 +1,253 @@
+<div class="overlay" *ngIf="screen_loader">
+  <div class="center">
+    <mat-progress-spinner diameter=50 mode="indeterminate" color="primary">
+    </mat-progress-spinner>
+  </div>
+</div>
+
+<div class="container" *ngIf="order" [dir]="dir">
+  <div style="display: flex;justify-content: space-between;">
+    <h3 [dir]="dir">
+      <a (click)="goToBack()" class="back_btn">{{'Orders List' | translate}} >></a>
+      <b style="margin: 0 5px;">{{order.no}}</b>
+    </h3>
+    <a (click)="goToBack()" class="back_btn forward"><mat-icon [class]="dir=='rtl'?'forward_icon':''">forward</mat-icon></a>
+  </div>
+  <mat-card class="mat_card_order">
+    <mat-card-header [dir]="dir">
+      {{'Order Data' | translate}}
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row3">
+        <div class="cell">
+          <b>{{'Order ID' | translate}} : </b><span>{{order.no}}</span>
+        </div>
+        <div class="cell">
+          <b>{{'Order Type' | translate}} : </b>
+          <span *ngIf="order.type != 'old'">{{order.type | translate}}</span>
+          <span *ngIf="order.type == 'old' && order_is_docs">{{'docs' | translate}}</span>
+          <span *ngIf="order.type == 'old' && order_is_mail">{{'mail' | translate}}</span>
+        </div>
+        <div class="cell">
+          <b>{{'Order Date' | translate}} : </b><span>{{order.date}}</span>
+        </div>
+      </div>
+      <div class="mat-elevation-z4 data_table">
+        <table mat-table [dataSource]="dataSource">
+
+          <!-- item_name Column -->
+          <ng-container matColumnDef="item_name">
+            <th mat-header-cell *matHeaderCellDef> {{'item' | translate }} </th>
+            <td mat-cell *matCellDef="let element"> {{element.item_name}} </td>
+          </ng-container>
+
+          <!-- item_duration Column -->
+          <ng-container matColumnDef="item_duration">
+            <th mat-header-cell *matHeaderCellDef> {{'duration' | translate }} </th>
+            <td mat-cell *matCellDef="let element"> {{element.item_duration}} {{'working' | translate }}</td>
+          </ng-container>
+
+          <!-- item_price Column -->
+          <ng-container matColumnDef="item_price">
+            <th mat-header-cell *matHeaderCellDef> {{'price' | translate }} </th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.item_price == '' && element.item_price_total != ''">{{element.item_price_total}}</span>
+              <span *ngIf="element.item_price != ''">{{element.item_price}} = {{element.item_price_total}}</span>
+              <span *ngIf="element.item_price == '' && element.item_price_total == ''">{{element.item_price_desc}}</span>
+            </td>
+          </ng-container>
+
+          <!-- desc item Column -->
+          <ng-container matColumnDef="item_desc">
+            <th mat-header-cell *matHeaderCellDef>{{'Notes' | translate }}</th>
+            <td mat-cell *matCellDef="let element"> {{element.item_desc}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <div class="category_order" *ngFor="let cat of order.categories">
+          <p style="margin: 0;">_ {{cat.category_name}}
+            <span *ngIf="cat.category_price != '' && cat.category_price_total != ''" style="font-size: 12px;"> ({{cat.category_price}} = {{cat.category_price_total}}) </span>
+            {{cat.category_price_desc}}
+            <br> <span *ngIf="cat.category_duration != ''"> {{'and added to work duration' | translate }} {{cat.category_duration}} {{'working' | translate }}</span>
+          </p>
+        </div>
+        <p style="margin: 0;font-weight: 500;" *ngIf="order.translate_lang">_ {{'Translate language' | translate}}: ({{order.translate_lang}})</p>
+      </div>
+      <div class="row" *ngIf="order_is_docs">
+        <div class="cell">
+          <b>{{'Sheet Number' | translate}} : </b><span>{{order.sheet_number}}</span>
+        </div>
+        <div class="cell" *ngIf="order.notes">
+          <b>{{'Notes' | translate}} : </b><span>{{order.notes}}</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="cell">
+          <b>{{'Cost' | translate}} : </b><span style="color:red;">{{order.cost}}</span><span *ngIf="order.cost_extra"> + {{order.cost_extra}}</span>
+        </div>
+        <div class="cell">
+          <b>{{'Total duration' | translate}} : </b><span style="color:green;">{{order.total_duration}}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat_card_order" *ngIf="order_is_docs">
+    <mat-card-header [dir]="dir">
+      {{'Customer Personal Data' | translate}}
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row3">
+        <div class="cell">
+          <b>{{'Fullname' | translate}} : </b><span>{{order.fullname}}</span>
+        </div>
+        <div class="cell" *ngIf="order.email">
+          <b>{{'Email' |translate}} : </b><span>{{order.email}}</span>
+        </div>
+        <div class="cell">
+          <b>{{'Phone' | translate}} : </b><span>{{order.phone}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="cell">
+          <b>{{'Address' | translate}} : </b><span>{{order.address_from}}</span>
+        </div>
+        <div class="cell" *ngIf="order.id_number">
+          <b>{{'ID Number' | translate}} : </b><span>{{order.id_number}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="cell">
+          <b>{{'Uploaded Photos' | translate}} :</b>
+          <div class="photos">
+            <a [href]="order.img.front_side" target="_blank" *ngIf="order.img.front_side"><img [src]="order.img.front_side"></a>
+            <a [href]="order.img.back_side" target="_blank" *ngIf="order.img.back_side && order.img.front_side"><img class="img2" [src]="order.img.back_side"></a>
+            <a [href]="order.img.back_side" target="_blank" *ngIf="order.img.back_side && !order.img.front_side"><img [src]="order.img.back_side"></a>
+
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat_card_order" *ngIf="order_is_mail">
+    <mat-card-header [dir]="dir">
+      {{'Personal Data' | translate}}
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info">
+        <mat-divider></mat-divider>
+        <h3>{{'Sender Info' | translate}} :</h3>
+        <mat-divider></mat-divider>
+
+        <div class="row3">
+          <div class="cell">
+            <b>{{'Fullname' | translate}} : </b><span>{{order.fullname}}</span>
+          </div>
+          <div class="cell" *ngIf="order.email">
+            <b>{{'Email' | translate}} : </b><span>{{order.email}}</span>
+          </div>
+          <div class="cell">
+            <b>{{'Phone' | translate}} : </b><span>{{order.phone}}</span>
+          </div>
+        </div>
+        <div class="row3">
+          <div class="cell">
+            <b>{{'Address' | translate}} : </b><span>{{order.address_from}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info">
+        <mat-divider></mat-divider>
+        <h3>{{'Recipient Info' | translate}} :</h3>
+        <mat-divider></mat-divider>
+
+        <div class="row3">
+          <div class="cell">
+            <b>{{'Fullname' | translate}} : </b><span>{{order.rec_firstname}} {{order.rec_lastname}}</span>
+          </div>
+          <div class="cell">
+            <b>{{'Phone' | translate}} : </b><span>{{order.rec_phone}}</span>
+          </div>
+        </div>
+        <div class="row3">
+          <div class="cell">
+            <b>{{'City' | translate}} : </b><span>{{order.city}}</span>
+          </div>
+          <div class="cell">
+            <b>{{'Address' | translate}} : </b><span>{{order.address_to}}</span>
+          </div>
+        </div>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat_card_order">
+    <mat-card-header [dir]="dir">
+      {{'Order Statuses' | translate}}
+    </mat-card-header>
+    <mat-card-content>
+      <button mat-raised-button type="button" class="dialog_btn" (click)="openDialogAddStatus(order.id, order_type, order.email, order.lang, order.no)">
+        {{'Add Status' | translate}}
+      </button>
+      <div class="mat-elevation-z4 data_table">
+        <table mat-table [dataSource]="statusDataSource">
+
+          <!-- status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> {{'Status' | translate }} </th>
+            <td mat-cell *matCellDef="let element"> {{element.status.status}} </td>
+          </ng-container>
+
+          <!-- owner Column -->
+          <ng-container matColumnDef="owner">
+            <th mat-header-cell *matHeaderCellDef> {{'Owner' | translate }} </th>
+            <td mat-cell *matCellDef="let element"> {{element.owner}}</td>
+          </ng-container>
+
+          <!-- notes Column -->
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef> {{'Notes' | translate }} </th>
+            <td mat-cell *matCellDef="let element">
+              {{element.notes}}
+            </td>
+          </ng-container>
+
+          <!-- Image Column -->
+          <ng-container matColumnDef="img">
+            <th mat-header-cell *matHeaderCellDef> {{'Photo' | translate }} </th>
+            <td mat-cell *matCellDef="let element">
+              <a [href]="element.img" target="_blank" *ngIf="element.img"><img class="img_status" [src]="element.img"></a>
+            </td>
+          </ng-container>
+
+          <!-- date Column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>{{'Status Date' | translate }}</th>
+            <td mat-cell *matCellDef="let element"> {{element.date | date:'dd/MM/yyyy | hh:mm'}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsStatus"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsStatus;"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="5">{{'No data available' | translate}}</td>
+          </tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div style="display: flex;justify-content: center;" *ngIf="error_msg">
+  <p>{{'This Order Not Found' | translate}}!</p>
+</div>

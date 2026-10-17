@@ -1,0 +1,62 @@
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+.overlay{
+  height:100vh;
+  width:100%;
+  background-color:rgba(0, 0, 0, 0.286);
+  z-index:    10;
+  top:        0;
+  left:       0;
+  position:   fixed;
+}
+
+.container{
+  height:100vh;
+}
+h3[dir="rtl"]{
+  margin-inline-start: 20px;
+}
+.mat_card_order{
+  box-shadow: unset !important;
+  padding: 0 !important;
+  background-color: unset;
+}
+
+.data_table{
+  margin-top: 20px;
+  overflow: auto;
+}
+.data_table th {
+  font-size: 11px;
+  color: #777;
+}
+.data_table td {
+  font-size: 12px;
+  padding-top: 10px;
+}
+.data_table ._row {
+  cursor: pointer;
+}
+.data_table ._row:hover {
+  background: #eee;
+}
+.mat-cell{
+  text-align: center;
+  padding: 10px;
+  color: #888;
+  background: bisque;
+}
+.black_color{
+  color: black;
+}
+
+@media screen and (max-width: 700px) {
+
+
+}

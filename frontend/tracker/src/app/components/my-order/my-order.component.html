@@ -1,0 +1,49 @@
+<div class="overlay" *ngIf="screen_loader">
+  <div class="center">
+    <mat-progress-spinner diameter=50 mode="indeterminate" color="primary">
+    </mat-progress-spinner>
+  </div>
+</div>
+
+<div class="container" [dir]="dir">
+  <form [formGroup]="form" (ngSubmit)="getOrderStatus(form.controls.order_code.value);">
+    <mat-card appearance="outlined" class="track_card">
+        <mat-card-header class="track_header">
+          <mat-card-title>{{'Track your order status' | translate}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="track_content">          
+          <mat-form-field appearance="outline">
+              <mat-label>{{'Enter your email or firstname' | translate}}</mat-label>
+              <input matInput placeholder="pat@example.com" formControlName="email_firstname" (keyup)="checkEmail()"/>
+              <mat-error *ngIf="form.controls['email_firstname'].hasError('required')" >{{'your email or firstname is required' | translate}}!</mat-error>
+              <mat-error *ngIf="form.controls['email_firstname'].hasError('email')" >{{'your email is invalid' | translate}}!</mat-error>
+
+            </mat-form-field>
+          <mat-form-field appearance="outline">
+              <mat-label>{{'Enter your order code' | translate}}</mat-label>
+              <input matInput formControlName="order_code" />
+              <mat-error *ngIf="form.controls['order_code'].hasError('required')" >{{'order code is required' | translate}}!</mat-error>
+              <mat-error *ngIf="form.controls['order_code'].hasError('codeInvalid')" >{{'order code is invalid' | translate}}!</mat-error>
+
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-raised-button type="submit"><mat-icon>search</mat-icon>{{'My order status' | translate}}</button>
+        </mat-card-actions>
+    </mat-card>
+  </form>
+  <mat-vertical-stepper [linear]="true" #stepper *ngIf="showOrderStatus">
+    
+    <mat-step *ngFor="let st of statusArr" label="{{st.status.status}}, {{st.date | date: 'dd/MM/yyyy | h:m'}}">
+      <small *ngIf="st.notes">{{st.notes}}</small>
+      <a [href]="st.img" *ngIf="st.img!=''" target="_blank"><img [src]="st.img" alt=""></a>
+    </mat-step>
+
+    <!-- Icon overrides. -->
+    <ng-template matStepperIcon="edit">
+      <mat-icon>done</mat-icon>
+    </ng-template>
+
+  </mat-vertical-stepper>
+  <p *ngIf="noOrderStatus" style="padding: 10px;background: antiquewhite;text-align: center;border-radius: 5px;">{{'Your order is still pending' | translate}}...</p>
+</div>

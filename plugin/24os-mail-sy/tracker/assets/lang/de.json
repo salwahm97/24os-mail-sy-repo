@@ -1,0 +1,17 @@
+{
+    "Track your order status": "Verfolgen Sie Ihren Bestellstatus",
+    "Enter your email or firstname": "Geben Sie Ihre E-Mail-Adresse oder Ihren Vornamen ein",
+    "your email or firstname is required": "Ihre E-Mail-Adresse oder Ihr Vorname sind erforderlich",
+    "your email is invalid": "Ihre E-Mail-Adresse ist ungültig",
+    "Enter your order code": "Geben Sie Ihren Bestellcode ein",
+    "order code is required": "Bestellcode ist erforderlich",
+    "order code is invalid": "Bestellcode ist ungültig",
+    "My order status": "Mein Bestellstatus",
+    "Error": "Fehler",
+    "your firstname is invalid": "Ihr Vorname ist ungültig",
+    "order email is empty, please enter your firstname": "Bestell-E-Mail ist leer, bitte geben Sie Ihren Vornamen ein",
+    "the email does not match the email you entered in your order": "Die E-Mail-Adresse stimmt nicht mit der E-Mail-Adresse überein, die Sie in Ihrer Bestellung eingegeben haben",
+    "the firstname does not match the firstname you entered in your order": "Der Vorname stimmt nicht mit dem Vornamen überein, den Sie in Ihrer Bestellung eingegeben haben",
+    "Your order is still pending": "Ihre Bestellung steht noch aus"
+
+}

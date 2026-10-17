@@ -1,0 +1,77 @@
+
+.title-dialog{
+  background: darkkhaki;
+  color: white !important;
+  font-size: 13px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 10px 0 #ccc;
+}
+
+.inputs_row{
+  display: flex;
+  margin-bottom: 10px;
+  align-items: baseline;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.mat_dialog_content{
+  padding: 5px 20px;
+}
+
+.dialog_actions{
+  min-height: 65px;
+  padding: 8px 12px;
+}
+.add_btn{
+  background-color: darkkhaki;
+  color: white;
+  height: 40px;
+  width: 120px;
+}
+.cancel_btn{
+  height: 40px;
+}
+
+.upload_div{
+  text-align: end;
+}
+.remove_image_icon{
+  cursor: pointer;
+}
+.upload_image_icon{
+  color: white;
+  margin-inline-end: 3px;
+  border-radius: 5px;
+  background: gray;
+  cursor: pointer;
+}
+mat-label{
+  font-size: 14px;
+}
+mat-form-field input{
+  font-size: 14px;
+}
+::ng-deep mat-progress-spinner circle{
+  stroke: white !important;
+}
+@media screen and (max-width: 700px) {
+  ::ng-deep .fullscreen-dialog {
+    max-width: 100% !important;
+    width: 100%;
+  }
+  .mat_dialog_content{
+    max-height: 70vh;
+  }
+  .inputs_row{
+    flex-flow: column;
+    align-items: unset;
+  }
+
+}

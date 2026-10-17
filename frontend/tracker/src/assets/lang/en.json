@@ -1,0 +1,16 @@
+{
+    "Track your order status": "Track your order status",
+    "Enter your email or firstname": "Enter your email or firstname",
+    "your email or firstname is required": "your email or firstname is required",
+    "your email is invalid": "your email is invalid",
+    "Enter your order code": "Enter your order code",
+    "order code is required": "order code is required",
+    "order code is invalid": "order code is invalid",
+    "My order status": "My order status",
+    "Error": "Error",
+    "your firstname is invalid": "your firstname is invalid",
+    "order email is empty, please enter your firstname": "order email is empty, please enter your firstname",
+    "the email does not match the email you entered in your order": "the email does not match the email you entered in your order",
+    "the firstname does not match the firstname you entered in your order": "the firstname does not match the firstname you entered in your order",
+    "Your order is still pending": "Your order is still pending"
+}

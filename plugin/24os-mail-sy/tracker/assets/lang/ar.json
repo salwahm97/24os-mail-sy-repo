@@ -1,0 +1,16 @@
+{
+    "Track your order status": "تتبع حالة طلبك",
+    "Enter your email or firstname": "ادخل بريدك الالكتروني او اسمك",
+    "your email or firstname is required": "البريد الالكتروني او الاسم مطلوب",
+    "your email is invalid": "بريدك الالكتروني خاطئ",
+    "Enter your order code": "ادخل معرف طلبك",
+    "order code is required": "معرف الطلب مطلوب",
+    "order code is invalid": "معرف الطلب خاطئ",
+    "My order status": "حالة طلبي",
+    "Error": "خطأ",
+    "your firstname is invalid": "اسمك خاطئ",
+    "order email is empty, please enter your firstname": "البريد الالكتروني الموجود في الطلب يكون فارغ, الرجاء ادخال اسمك",
+    "the email does not match the email you entered in your order": "البريد الالكتروني لا يطابق البريد الالكتروني الموجود في طلبك",
+    "the firstname does not match the firstname you entered in your order": "الاسم غير مطابق مع الاسم الموجود في طلبك",
+    "Your order is still pending": "طلبك لا يزال معلقا"
+}

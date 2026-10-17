@@ -1,0 +1,58 @@
+<div [dir]="data.dir">
+  <div mat-dialog-title class="title-dialog">{{'Add Status' | translate}}</div>
+
+  <form [formGroup]="statusForm" (ngSubmit)="submit(data.order_id, data.order_email, data.order_lang, data.order_no)">
+    <div mat-dialog-content class="mat_dialog_content">
+      <div class="inputs_row">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>{{'Choose a Status' | translate}}</mat-label>
+          <mat-icon matPrefix class="prefix_icon">location_on</mat-icon>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of statusesArray ;let i = index;" [value]="status.id">{{status.status}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="statusForm.controls['status'].hasError('required')" >{{'status is required' | translate}}!</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="inputs_row">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>{{'Notes' | translate}}</mat-label>
+          <textarea matInput formControlName="notes" placeholder="{{'Enter notes' | translate }}"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="full-width upload_div">
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>{{'Upload Photo' | translate}}</mat-label>
+          <mat-icon matPrefix>description</mat-icon>
+          <mat-icon matSuffix
+                    color="warn"
+                    class="remove_image_icon"
+                    (click)="removeImage()"
+                    *ngIf="show_remove_icon">
+            close
+          </mat-icon>
+          <mat-icon matSuffix
+                      class="upload_image_icon"
+                      (click)="selectFileImage()"
+                      *ngIf="!show_remove_icon">
+            upload
+          </mat-icon>
+          <input matInput formControlName="image_name" placeholder="{{'Photo' | translate}}">
+          <mat-error *ngIf="statusForm.controls['image_name'].hasError('typeImageInvalid')" >{{'photo must to be jpeg png jpg' | translate}}!</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-checkbox formControlName="send" class="full-width" color="warn">{{'send the status to the customer' | translate}}</mat-checkbox>
+    </div>
+    <div mat-dialog-actions align="end" class="dialog_actions">
+      <button mat-raised-button type="button" [mat-dialog-close]="false" class="cancel_btn">{{'Cancel' | translate}}</button>
+      <button type="submit" mat-raised-button class="add_btn" [disabled]="screen_loader">
+        <span *ngIf="!screen_loader">{{'Add' | translate}}</span>
+        <mat-progress-spinner *ngIf="screen_loader" diameter=20 mode="indeterminate" color="primary">
+        </mat-progress-spinner>
+      </button>
+    </div>
+  </form>
+</div>
+

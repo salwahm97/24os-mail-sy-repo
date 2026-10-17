@@ -1,0 +1,8 @@
+<div style="position: relative;">
+  <div [style]="direction_css" [innerHTML]="data.html" class="data"></div>
+  <div [style]="direction_css" [class]="lang == 'ar'?'button_ar': 'button'">
+    <button mat-raised-button (click)="dismiss(snackBar)">{{'Dismiss' | translate }}</button>
+  </div>
+</div>
+
+

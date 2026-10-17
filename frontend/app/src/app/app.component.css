@@ -1,0 +1,13 @@
+.content {
+  display: flex;
+  justify-content: center;
+  /*   height: 100%; */
+}
+app-request-order {
+  width: 800px;
+}
+@media screen and (max-width: 960px) {
+  app-request-order {
+    width: 100%;
+  }
+}

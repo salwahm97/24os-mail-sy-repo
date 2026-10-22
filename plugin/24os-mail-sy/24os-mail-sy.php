@@ -3,9 +3,9 @@
 * Plugin Name: 24os Mail Sy
 * Plugin URI: http://www.24os.de/24os-mail-sy
 * * Author URI: http://www.24os.de
-* Author: 24os.de, Salwa Hammmami
+* Author: 24os.de, salwahm97
 * Version: 1.4.0
-* Description: Order management and tracking (official documents / mail forwarding) with Angular front-ends. Developed by Salwa Hammami (https://github.com/salwahm97).
+* Description: Order management and tracking (official documents / mail forwarding) with Angular front-ends. Developed by salwahm97 (https://github.com/salwahm97).
 */
 
     if(!defined("ABSPATH"))
